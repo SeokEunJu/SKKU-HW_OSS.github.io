@@ -136,5 +136,5 @@ def train(train_directories, n_epoch):
 
 if __name__ == '__main__':
     epochs = 70
-    train_directories = [ffhq]
+    train_directories = []
     train(train_directories, epochs)

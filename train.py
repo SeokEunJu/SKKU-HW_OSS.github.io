@@ -5,6 +5,7 @@ import torch.optim as optim
 from torchvision.models import resnet50
 import cv2
 import os
+from tensorboardX import SummaryWriter
 
 from utils import Dataset
 from utils import normalization
@@ -40,14 +41,20 @@ def train(train_directories, n_epoch):
     generator = Generator()  # .cuda()
     discriminator = Discriminator()  # .cuda()
 
+    if not os.path.exists(os.path.join(proj_directory, 'validation')):
+        os.makedirs(os.path.join(proj_directory, 'validation'))
+    if not os.path.exists(os.path.join(proj_directory, 'ckpt')):
+        os.makedirs(os.path.join(proj_directory, 'ckpt'))
+    if not os.path.exists(os.path.join(proj_directory, 'logs')):
+        os.makedirs(os.path.join(proj_directory, 'logs'))
+    summary_writer = SummaryWriter('./logs/')
+
     if os.path.exists(save_path_G):
         generator.load_state_dict(torch.load(save_path_G))
         print('reading generator checkpoints...')
     if os.path.exists(save_path_D):
         discriminator.load_state_dict(torch.load(save_path_D))
         print('reading discriminator checkpoints...')
-    if not os.path.exists(os.path.join(proj_directory, 'validation')):
-        os.makedirs(os.path.join(proj_directory, 'validation'))
 
     mse = nn.MSELoss()
     res_base = nn.Sequential(*list(resnet.conv1), *list(resnet.bn1), *list(resnet.relu), *list(resnet.maxpool))
@@ -121,7 +128,12 @@ def train(train_directories, n_epoch):
             G_optimizer.step()
 
             if i % 10 == 0:
-                print("loss at %d : %d ==>\t%.4f (%.4f + %.4f + %.4f)" % (epoch, i, g_loss, mse_loss, perceptual_loss, FAN_loss))
+                print("loss at %d : %d ==>\t%.4f (%.4f + %.4f + %.4f)"
+                      % (epoch, i, g_loss, mse_loss, perceptual_loss, FAN_loss))
+                summary_writer.add_scalar('mse_loss', mse_loss.item(), epoch * len(loaded_training_data) + i)
+                summary_writer.add_scalar('perceptual_loss', perceptual_loss.item(),
+                                          epoch * len(loaded_training_data) + i)
+                summary_writer.add_scalar('FAN_loss', FAN_loss.item(), epoch * len(loaded_training_data) + i)
 
         if epoch % 2 == 0:
             validation = os.path.join(proj_directory, 'validation', str(epoch))
@@ -143,7 +155,6 @@ def train(train_directories, n_epoch):
 
         # decay learning rate after one epoch
         learning_rate -= decay
-
 
     # save checkpoints
     torch.save(generator.state_dict(), save_path_G)

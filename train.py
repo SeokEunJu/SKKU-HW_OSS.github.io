@@ -10,7 +10,7 @@ from tensorboardX import SummaryWriter
 from utils import Dataset
 from utils import normalization
 
-from model import Generator, Discriminator
+from model import Generator, Discriminator, load_FAN, upsample
 
 proj_directory = './'
 data_directory = '/dataset'
@@ -40,6 +40,8 @@ def train(train_directories, n_epoch):
 
     generator = Generator()  # .cuda()
     discriminator = Discriminator()  # .cuda()
+    FAN = load_FAN()  # .cuda()
+    preprocess_for_FAN = upsample()  # .cuda()
 
     if not os.path.exists(os.path.join(proj_directory, 'validation')):
         os.makedirs(os.path.join(proj_directory, 'validation'))
@@ -123,6 +125,10 @@ def train(train_directories, n_epoch):
             FAN_loss =
 
             g_loss = mse_loss + perceptual_loss + FAN_loss
+
+            if n_epoch >= 60:
+                adv_loss =
+                g_loss += adv_loss
 
             g_loss.backward()
             G_optimizer.step()

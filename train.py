@@ -11,7 +11,7 @@ from utils import normalization
 
 from model import Generator, Discriminator
 
-proj_directory = '/project'
+proj_directory = './'
 data_directory = '/dataset'
 validation_directory = ''
 
@@ -50,7 +50,10 @@ def train(train_directories, n_epoch):
         os.makedirs(os.path.join(proj_directory, 'validation'))
 
     mse = nn.MSELoss()
-    resnet_feature = nn.Sequential(*list(vgg.features)[:-1])
+    res_base = nn.Sequential(*list(resnet.conv1), *list(resnet.bn1), *list(resnet.relu), *list(resnet.maxpool))
+    res_B1 = nn.Sequential(*list(res_base), *list(resnet.layer1))
+    res_B2 = nn.Sequential(*list(resnet.layer2))
+    res_B3 = nn.Sequential(*list(resnet.layer3))
 
     learning_rate = 2.5e-4
     final_lr = 1e-5
@@ -94,10 +97,20 @@ def train(train_directories, n_epoch):
             # initialization
             G_optimizer.zero_grad()
 
-            # loss computation
-            mse_loss = mse(sr, gt)
+            # forward through ResNet layers
+            #
+            #
+            #
+            #
+            #
+            #
+            #
 
-            g_loss = mse_loss # + 0.006 * perceptual_loss
+            # loss computation
+            # mse_loss =
+            # perceptual_loss =
+            # FAN_loss =
+            g_loss = mse_loss + perceptual_loss + FAN_loss
 
             # g_loss.backward(retain_graph=True)
             g_loss.backward()
@@ -136,5 +149,5 @@ def train(train_directories, n_epoch):
 
 if __name__ == '__main__':
     epochs = 70
-    train_directories = []
+    train_directories = [celeba]
     train(train_directories, epochs)

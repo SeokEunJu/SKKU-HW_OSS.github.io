@@ -57,10 +57,11 @@ def train(train_directories, n_epoch):
         print('reading discriminator checkpoints...')
 
     mse = nn.MSELoss()
-    res_base = nn.Sequential(*list(resnet.conv1), *list(resnet.bn1), *list(resnet.relu), *list(resnet.maxpool))
-    res_B1 = nn.Sequential(*list(res_base), *list(resnet.layer1))
-    res_B2 = nn.Sequential(*list(resnet.layer2))
-    res_B3 = nn.Sequential(*list(resnet.layer3))
+
+    res_base = nn.Sequential(resnet.conv1, resnet.bn1, resnet.relu, resnet.maxpool)
+    res_B1 = nn.Sequential(*list(res_base), *list(resnet.layer1))  # .cuda()
+    res_B2 = nn.Sequential(*list(resnet.layer2))  # .cuda()
+    res_B3 = nn.Sequential(*list(resnet.layer3))  # .cuda()
 
     learning_rate = 2.5e-4
     final_lr = 1e-5

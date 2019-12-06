@@ -12,12 +12,13 @@ from model import Generator, Discriminator, load_FAN, upsample
 
 proj_directory = './'
 data_directory = '/dataset'
-validation_directory = ''
 
 celeba = os.path.join(data_directory, 'img_align_celeba')
 menpo = os.path.join(data_directory, 'LS3D-W/Menpo-3D')
 _300w = os.path.join(data_directory, 'LS3D-W/300W-Testset-3D')
 aflw = os.path.join(data_directory, 'LS3D-W/AFLW2000-3D-Reannotated')
+
+validation_directory = ''
 
 save_path_G = os.path.join(proj_directory, 'generator.pth')
 save_path_D = os.path.join(proj_directory, 'discriminator.pth')
@@ -33,7 +34,8 @@ def train(train_directories, n_epoch):
         dataset=dataset, batch_size=batch_size, shuffle=True
     )
 
-    valid_dataset = Dataset(validation_directory)  # evaluation dataset
+    validation_directories = [validation_directory]
+    valid_dataset = Dataset(validation_directories)  # evaluation dataset
     loaded_valid_data = DataLoader(dataset=valid_dataset, batch_size=1)
 
     generator = Generator()  # .cuda()

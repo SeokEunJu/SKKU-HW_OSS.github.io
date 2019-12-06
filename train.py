@@ -9,7 +9,7 @@ import os
 from utils import Dataset
 from utils import normalization
 
-from model import Generator, Discriminator, test_generator
+from model import Generator, Discriminator
 
 proj_directory = '/project'
 data_directory = '/dataset'
@@ -19,7 +19,6 @@ celeba = os.path.join(data_directory, 'img_align_celeba')
 menpo = os.path.join(data_directory, 'LS3D-W/Menpo-3D')
 _300w = os.path.join(data_directory, 'LS3D-W/300W-Testset-3D')
 aflw = os.path.join(data_directory, 'LS3D-W/AFLW2000-3D-Reannotated')
-ffhq = os.path.join(data_directory, 'ffhq')
 
 save_path_G = os.path.join(proj_directory, 'generator.pth')
 save_path_D = os.path.join(proj_directory, 'discriminator.pth')
@@ -97,11 +96,8 @@ def train(train_directories, n_epoch):
 
             # loss computation
             mse_loss = mse(sr, gt)
-            sr_vgg = vgg_feature(sr)
-            gt_vgg = vgg_feature(gt)
-            vgg_loss = mse(sr_vgg, gt_vgg)
 
-            g_loss = mse_loss + 0.006 * vgg_loss
+            g_loss = mse_loss # + 0.006 * perceptual_loss
 
             # g_loss.backward(retain_graph=True)
             g_loss.backward()

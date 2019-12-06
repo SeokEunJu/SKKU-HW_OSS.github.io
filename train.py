@@ -73,6 +73,9 @@ def train(train_directories, n_epoch):
         G_optimizer = optim.RMSprop(generator.parameters(), lr=learning_rate)
         D_optimizer = optim.RMSprop(discriminator.parameters(), lr=learning_rate)
 
+        if epoch == 60:
+            print('start training with additional adversarial loss')
+
         for i, data in enumerate(loaded_training_data):
             lr, gt, img_name = data
             gt = gt.float()

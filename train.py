@@ -135,7 +135,7 @@ def train(train_directories, n_epoch):
                                           epoch * len(loaded_training_data) + i)
                 summary_writer.add_scalar('FAN_loss', FAN_loss.item(), epoch * len(loaded_training_data) + i)
 
-        if epoch % 2 == 0:
+        if epoch % 1 == 0:
             validation = os.path.join(proj_directory, 'validation', str(epoch))
             os.makedirs(validation)
             for _, val_data in enumerate(loaded_valid_data):
@@ -146,7 +146,7 @@ def train(train_directories, n_epoch):
                 sr = sr.cpu().detach().numpy().transpose(1, 2, 0)
                 img_name = img_name[0]
 
-                filename = os.path.join(validation, img_name + '.png')
+                filename = os.path.join(validation, img_name)
                 cv2.imwrite(filename=filename, img=sr)
 
             # save checkpoints

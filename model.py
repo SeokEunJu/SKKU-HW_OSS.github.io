@@ -70,7 +70,7 @@ def load_FAN():
 
     weights = model_zoo.load_url('https://www.adrianbulat.com/downloads/python-fan/2DFAN4-11f355bf06.pth.tar', map_location=lambda storage, loc: storage)
 
-    #cutoff two hourglass network
+    # cutoff two hourglass network
     pretrained_dict = {k: v for k, v in weights.items() if k in model.state_dict()}
 
     model.load_state_dict(pretrained_dict)

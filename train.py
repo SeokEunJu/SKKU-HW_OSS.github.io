@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
 import torch.optim as optim
-from torchvision.models.vgg import vgg16
+from torchvision.models import resnet50
 import cv2
 import os
 
@@ -25,7 +25,7 @@ save_path_G = os.path.join(proj_directory, 'generator.pth')
 save_path_D = os.path.join(proj_directory, 'discriminator.pth')
 
 batch_size = 8
-vgg = vgg16(pretrained=True).eval()
+resnet = resnet50(pretrained=True).eval()
 
 def train(train_directories, n_epoch):
     print('start')
@@ -51,7 +51,7 @@ def train(train_directories, n_epoch):
         os.makedirs(os.path.join(proj_directory, 'validation'))
 
     mse = nn.MSELoss()
-    vgg_feature = nn.Sequential(*list(vgg.features)[:-1])
+    resnet_feature = nn.Sequential(*list(vgg.features)[:-1])
 
     learning_rate = 2.5e-4
     final_lr = 1e-5

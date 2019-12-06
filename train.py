@@ -7,9 +7,7 @@ import cv2
 import os
 from tensorboardX import SummaryWriter
 
-from utils import Dataset
-from utils import normalization
-
+from utils import Dataset, normalization, compute_gradient_penalty
 from model import Generator, Discriminator, load_FAN, upsample
 
 proj_directory = './'
@@ -67,10 +65,13 @@ def train(train_directories, n_epoch):
     learning_rate = 2.5e-4
     final_lr = 1e-5
     decay = (learning_rate - final_lr) / n_epoch
+    GAN_start = 60
 
     print('train with MSE and perceptual loss')
     for epoch in range(n_epoch):
         G_optimizer = optim.RMSprop(generator.parameters(), lr=learning_rate)
+        D_optimizer = optim.RMSprop(discriminator.parameters(), lr=learning_rate)
+
         for i, data in enumerate(loaded_training_data):
             lr, gt, img_name = data
             gt = gt.float()
@@ -126,12 +127,28 @@ def train(train_directories, n_epoch):
 
             g_loss = mse_loss + perceptual_loss + FAN_loss
 
-            if n_epoch >= 60:
-                adv_loss =
-                g_loss += adv_loss
+            # adversarial loss added in the latter epoch
+            if epoch >= GAN_start:
+                fake_logit =
+                adv_loss = - fake_logit
+                g_loss += 1e-3 * adv_loss
 
             g_loss.backward()
             G_optimizer.step()
+
+            # train Discriminator to use adversarial loss
+            if epoch >= GAN_start:
+                D_optimizer.zero_grad()
+
+                sr = generator(lr).eval().detach()
+                fake_logit = discriminator(sr).mean()
+                real_logit = discriminator(gt).mean()
+
+                gradient_penalty = compute_gradient_penalty(discriminator, gt, sr)
+                d_loss = fake_logit - real_logit + 10. * gradient_penalty
+
+                d_loss.backward()
+                D_optimizer.step()
 
             if i % 10 == 0:
                 print("loss at %d : %d ==>\t%.4f (%.4f + %.4f + %.4f)"
@@ -157,14 +174,14 @@ def train(train_directories, n_epoch):
 
             # save checkpoints
             torch.save(generator.state_dict(), save_path_G)
-            # torch.save(discriminator.state_dict(), save_path_D)
+            torch.save(discriminator.state_dict(), save_path_D)
 
         # decay learning rate after one epoch
         learning_rate -= decay
 
     # save checkpoints
     torch.save(generator.state_dict(), save_path_G)
-    # torch.save(discriminator.state_dict(), save_path_D)
+    torch.save(discriminator.state_dict(), save_path_D)
     print('training finished.')
 
 

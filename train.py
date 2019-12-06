@@ -97,27 +97,31 @@ def train(train_directories, n_epoch):
             # initialization
             G_optimizer.zero_grad()
 
-            # forward through ResNet layers
+            # forwarding through ResNet to compute Perceptual loss
             #
             #
             #
             #
             #
+            #
+            #
+
+            # forward through FAN to compute FAN loss
             #
             #
 
             # loss computation
-            # mse_loss =
-            # perceptual_loss =
-            # FAN_loss =
+            mse_loss =
+            perceptual_loss =
+            FAN_loss =
+
             g_loss = mse_loss + perceptual_loss + FAN_loss
 
-            # g_loss.backward(retain_graph=True)
             g_loss.backward()
             G_optimizer.step()
 
             if i % 10 == 0:
-                print("loss at %d : %d ==>\t%.6f (%.6f + %.6f)" % (epoch, i, g_loss, mse_loss, vgg_loss))
+                print("loss at %d : %d ==>\t%.4f (%.4f + %.4f + %.4f)" % (epoch, i, g_loss, mse_loss, perceptual_loss, FAN_loss))
 
         if epoch % 2 == 0:
             validation = os.path.join(proj_directory, 'validation', str(epoch))

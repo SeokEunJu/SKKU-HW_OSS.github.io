@@ -101,7 +101,7 @@ def train(train_directories, n_epoch):
             # forwarding
             sr = generator(lr)
 
-            # checking network formation - step2
+            # checking network formation - step 2
             # if the output of the print statement above is 'torch.Size([4, 3, 64, 64])', success
             ########################################################################################
             # print(sr.shape)                                                                      #
@@ -111,6 +111,8 @@ def train(train_directories, n_epoch):
             # initialization
             G_optimizer.zero_grad()
 
+            # should be implemeted from here - step 3
+            # if the loss values appear correctly and machine learns effectively, it is a success
             # forwarding through ResNet to compute Perceptual loss
             #
             #

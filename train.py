@@ -20,8 +20,8 @@ aflw = os.path.join(data_directory, 'LS3D-W/AFLW2000-3D-Reannotated')
 
 validation_directory = ''
 
-save_path_G = os.path.join(proj_directory, 'generator.pth')
-save_path_D = os.path.join(proj_directory, 'discriminator.pth')
+save_path_G = os.path.join(proj_directory, 'ckpt', 'generator.pth')
+save_path_D = os.path.join(proj_directory, 'ckpt', 'discriminator.pth')
 
 batch_size = 8
 resnet = resnet50(pretrained=True).eval()
@@ -173,7 +173,7 @@ def train(train_directories, n_epoch):
                 lr, _, img_name = val_data
                 sr = generator(lr)
                 sr = sr[0]
-                sr = normalization(sr)
+                sr = normalization(sr, _from=(0, 1))
                 sr = sr.cpu().detach().numpy().transpose(1, 2, 0)
                 img_name = img_name[0]
 

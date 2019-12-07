@@ -83,7 +83,7 @@ def train(train_directories, n_epoch):
             gt = gt.float()
             lr = lr.cuda()
             gt = gt.cuda()
-
+            ########################################################################################
             # checking dataloader - step 1
             # if there is a pair of outputs LR and HR at project file, success.
             
@@ -129,7 +129,7 @@ def train(train_directories, n_epoch):
             #
 
             # loss computation
-            mse_loss = nn.MSELoss()
+            mse_loss = 
             perceptual_loss = 
             FAN_loss =
 

@@ -8,10 +8,11 @@ from random import randint
 
 
 class Dataset(data.Dataset):
-    def __init__(self, dirs, in_size=64, scale_by=4):
+    def __init__(self, dirs, in_size=64, scale_by=4, augmentation=True):
         self.in_size = in_size
         self.scale_by = scale_by
         self.train_size = self.in_size // self.scale_by
+        self.augmentation = augmentation
         self.img_list = []
 
         for d in dirs:
@@ -51,6 +52,8 @@ def augmentation(image):
 
 
 def downsample(image, size):
+    # assure the input image is in shape of 64 x 64
+
     # size input in a tuple form (h , w)
 
     # random blur

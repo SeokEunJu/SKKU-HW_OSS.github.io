@@ -71,13 +71,16 @@ def train(train_directories, n_epoch):
     res_B2 = nn.Sequential(*list(resnet.layer2))  # .cuda()
     res_B3 = nn.Sequential(*list(resnet.layer3))  # .cuda()
 
-    learning_rate = 2.5e-4
+    init_lr = 2.5e-4
     final_lr = 1e-5
-    decay = (learning_rate - final_lr) / n_epoch
+    decay = (init_lr - final_lr) / n_epoch
     GAN_start = 60
 
     print('train with MSE and perceptual loss')
     for epoch in range(n_epoch):
+        # decay learning rate after one epoch
+        learning_rate = init_lr - decay * epoch
+
         G_optimizer = optim.RMSprop(generator.parameters(), lr=learning_rate)
         D_optimizer = optim.RMSprop(discriminator.parameters(), lr=learning_rate)
 
@@ -189,9 +192,6 @@ def train(train_directories, n_epoch):
             # save checkpoints
             torch.save(generator.state_dict(), save_path_G)
             torch.save(discriminator.state_dict(), save_path_D)
-
-        # decay learning rate after one epoch
-        learning_rate -= decay
 
     # save checkpoints
     torch.save(generator.state_dict(), save_path_G)

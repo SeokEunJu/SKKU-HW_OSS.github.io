@@ -1,4 +1,5 @@
 import os
+import numpy as np
 from model import Generator
 from utils import *
 import torch
@@ -9,7 +10,7 @@ proj_directory = './'
 data_directory = '/dataset'
 save_path_G = os.path.join(proj_directory, 'ckpt', 'generator.pth')
 
-celeba = os.path.join(data_directory, 'sampled_celeba')
+ffhq = os.path.join(data_directory, 'ffhq', '69000')
 
 def evaluation(path_to_w, path_to_file):
     generator = Generator().cuda()
@@ -20,11 +21,14 @@ def evaluation(path_to_w, path_to_file):
         raise FileNotFoundError('path to Generator weights does not exist')
     if not os.path.exists(os.path.join(proj_directory, 'evaluation')):
         os.makedirs(os.path.join(proj_directory, 'evaluation'))
+        os.makedirs(os.path.join(proj_directory, 'evaluation', 'input'))
+        os.makedirs(os.path.join(proj_directory, 'evaluation', 'output'))
+        os.makedirs(os.path.join(proj_directory, 'evaluation', 'GT'))
 
     evaluation_record = './evaluation.txt'
     record = open(evaluation_record, 'w+')
 
-    dataset = Dataset(path_to_file)
+    dataset = Dataset(path_to_file, augmentation=False)
     loaded_valid_dataset = DataLoader(dataset=dataset, batch_size=1)
 
     total_psnr = 0
@@ -33,22 +37,35 @@ def evaluation(path_to_w, path_to_file):
     for i, data in enumerate(loaded_valid_dataset):
         lr, gt, name = data
         sr = generator(lr)
+
+        lr = lr[0]
+        lr = normalization(lr, _from=(0, 1))
+        lr = lr.cpu().detach().numpy().transpose(1, 2, 0).clip(0, 255).astype(np.uint8)
+
         sr = sr[0]
         sr = normalization(sr, _from=(0, 1))
-        sr = sr.cpu().detach().numpy().transpose(1, 2, 0)
-        name = name[0]
+        sr = sr.cpu().detach().numpy().transpose(1, 2, 0).clip(0, 255).astype(np.uint8)
 
         gt = gt[0]
         gt = normalization(gt, _from=(0, 1))
-        gt = gt.cpu().detach().numpy().transpose(1, 2, 0)
+        gt = gt.cpu().detach().numpy().transpose(1, 2, 0).clip(0, 255).astype(np.uint8)
 
         psnr = compare_psnr(gt, sr)
         ssim = compare_ssim(gt, sr, multichannel=True)
 
-        record.write(name + '\t==>\tPSNR: %.2f\tSSIM: %.2f\n' % (psnr, ssim))
+        name = name[0]
 
-        filename = os.path.join(proj_directory, 'evaluation', name)
+        record.write(name + '\t==>\tPSNR: %.2f\tSSIM: %.2f\n' % (psnr, ssim))
+        print(name + '\t==>\tPSNR: %.2f\tSSIM: %.2f\n' % (psnr, ssim))
+
+        filename = os.path.join(proj_directory, 'evaluation', 'input', name)
+        cv2.imwrite(filename=filename, img=lr)
+
+        filename = os.path.join(proj_directory, 'evaluation', 'output', name)
         cv2.imwrite(filename=filename, img=sr)
+
+        filename = os.path.join(proj_directory, 'evaluation', 'GT', name)
+        cv2.imwrite(filename=filename, img=gt)
 
         total_psnr += psnr
         total_ssim += ssim
@@ -61,5 +78,6 @@ def evaluation(path_to_w, path_to_file):
 
 
 if __name__ == '__main__':
-    eval_directories = [celeba]
+    eval_directories = [ffhq]
     evaluation(save_path_G, eval_directories)
+

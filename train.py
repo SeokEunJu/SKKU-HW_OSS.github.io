@@ -9,16 +9,16 @@ from tensorboardX import SummaryWriter
 
 from utils import Dataset, normalization, compute_gradient_penalty
 from model import Generator, Discriminator, load_FAN, upsample
-
-proj_directory = './'
-data_directory = '/dataset'
+#Own directory path
+proj_directory = 'C:\\Users\\falle\\dir_proj'
+data_directory = 'C:\\Users\\falle\\dir_data'
 
 celeba = os.path.join(data_directory, 'img_align_celeba')
 menpo = os.path.join(data_directory, 'LS3D-W/Menpo-3D')
 _300w = os.path.join(data_directory, 'LS3D-W/300W-Testset-3D')
 aflw = os.path.join(data_directory, 'LS3D-W/AFLW2000-3D-Reannotated')
-
-validation_directory = ''
+#Own directory path
+validation_directory = 'C:\\Users\\falle\\dir_var'
 
 save_path_G = os.path.join(proj_directory, 'ckpt', 'generator.pth')
 save_path_D = os.path.join(proj_directory, 'ckpt', 'discriminator.pth')
@@ -81,23 +81,23 @@ def train(train_directories, n_epoch):
         for i, data in enumerate(loaded_training_data):
             lr, gt, img_name = data
             gt = gt.float()
-            # lr = lr.cuda()
-            # gt = gt.cuda()
-
+            lr = lr.cuda()
+            gt = gt.cuda()
+            ########################################################################################
             # checking dataloader - step 1
             # if there is a pair of outputs LR and HR at project file, success.
-            ########################################################################################
-            # lr = lr[0].detach().numpy().transpose(1, 2, 0)                                       #
-            # lr = normalization(lr, _from=(0, 1))                                                 #
+            
+            lr = lr[0].detach().numpy().transpose(1, 2, 0)                                       
+            lr = normalization(lr, _from=(0, 1))                                                 
 
-            # gt = gt[0].detach().numpy().transpose(1, 2, 0)                                       #
-            # gt = normalization(gt, _from=(0, 1))                                                 #
+            gt = gt[0].detach().numpy().transpose(1, 2, 0)                                       
+            gt = normalization(gt, _from=(0, 1))                                                 
 
-            # filename_lr = os.path.join(proj_directory, 'LR_' + img_name[0])                      #
-            # filename_hr = os.path.join(proj_directory, 'HR_' + img_name[0])                      #
-            # cv2.imwrite(filename_lr, lr)                                                         #
-            # cv2.imwrite(filename_hr, gt)                                                         #
-            # quit()                                                                               #
+            filename_lr = os.path.join(proj_directory, 'LR_' + img_name[0])                      
+            filename_hr = os.path.join(proj_directory, 'HR_' + img_name[0])                      
+            cv2.imwrite(filename_lr, lr)                                                         
+            cv2.imwrite(filename_hr, gt)                                                         
+            quit()                                                                               
             ########################################################################################
 
             # forwarding
@@ -129,8 +129,8 @@ def train(train_directories, n_epoch):
             #
 
             # loss computation
-            mse_loss =
-            perceptual_loss =
+            mse_loss = 
+            perceptual_loss = 
             FAN_loss =
 
             g_loss = mse_loss + perceptual_loss + FAN_loss

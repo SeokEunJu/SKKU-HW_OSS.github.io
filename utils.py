@@ -1,7 +1,7 @@
+import os
 import torch
 import torchvision
 from torch.utils import data
-import os
 import cv2
 import numpy as np
 from random import randint

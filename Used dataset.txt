@@ -1,0 +1,21 @@
+1. 300W-LP
+Face Alignment Across Large Poses: A 3D Solution
+
+Download Link: https://drive.google.com/file/d/0B7OEHD3T4eCkVGs0TkhUWFN6N1k/view?usp=sharing
+
+2. AFLW
+Annotated Facial Landmarks in the Wild (AFLW)
+
+Download Link: https://www.tugraz.at/institute/icg/research/team-bischof/lrs/downloads/aflw/
+
+3. Celeb-A
+Large-scale CelebFaces Attributes (CelebA) Dataset
+
+Link: http://mmlab.ie.cuhk.edu.hk/projects/CelebA.html
+
+4. LS3D-W balanced
+large-scale 3D face alignment dataset constructed by annotating the images from AFLW[2], 300VW[3], 300W[4] and FDDB[5] in a consistent manner with 68 points using the automatic method
+
+Website for get download link: https://www.adrianbulat.com/face-alignment
+
+Direct download link: https://www.adrianbulat.com/downloads/FaceAlignment/LS3D-W-balanced-20-03-2017.zip

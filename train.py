@@ -9,16 +9,22 @@ from tensorboardX import SummaryWriter
 
 from utils import Dataset, normalization, compute_gradient_penalty
 from model import Generator, Discriminator, load_FAN, upsample
-#Own directory path
-proj_directory = 'C:\\Users\\falle\\dir_proj'
-data_directory = 'C:\\Users\\falle\\dir_data'
+
+# proj_directory = 'C:\\Users\\falle\\dir_proj'
+# data_directory = 'C:\\Users\\falle\\dir_data'
+
+# path should be left to relative path for others to clone and run code
+proj_directory = './'
+data_directory = '/dataset'
 
 celeba = os.path.join(data_directory, 'img_align_celeba')
 menpo = os.path.join(data_directory, 'LS3D-W/Menpo-3D')
 _300w = os.path.join(data_directory, 'LS3D-W/300W-Testset-3D')
 aflw = os.path.join(data_directory, 'LS3D-W/AFLW2000-3D-Reannotated')
-#Own directory path
-validation_directory = 'C:\\Users\\falle\\dir_var'
+
+# validation_directory = 'C:\\Users\\falle\\dir_var'
+# path should be left to relative path for others to clone and run code
+validation_directory = ''
 
 save_path_G = os.path.join(proj_directory, 'ckpt', 'generator.pth')
 save_path_D = os.path.join(proj_directory, 'ckpt', 'discriminator.pth')

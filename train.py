@@ -6,12 +6,16 @@ from torchvision.models import resnet50
 import cv2
 import os
 from tensorboardX import SummaryWriter
+from utils import normalization, compute_gradient_penalty
 
-from utils import Dataset, normalization, compute_gradient_penalty
+from utils import Dataset
+# for phase 2 and 3
+# from utils import example_Dataset as Dataset
+
 from model import Generator, Discriminator, load_FAN, upsample
+# for phase 3
+# from model import example_generator as Generator
 
-# proj_directory = 'C:\\Users\\falle\\dir_proj'
-# data_directory = 'C:\\Users\\falle\\dir_data'
 
 # path should be left to relative path for others to clone and run code
 proj_directory = './'
@@ -22,7 +26,6 @@ menpo = os.path.join(data_directory, 'LS3D-W/Menpo-3D')
 _300w = os.path.join(data_directory, 'LS3D-W/300W-Testset-3D')
 aflw = os.path.join(data_directory, 'LS3D-W/AFLW2000-3D-Reannotated')
 
-# validation_directory = 'C:\\Users\\falle\\dir_var'
 # path should be left to relative path for others to clone and run code
 validation_directory = ''
 

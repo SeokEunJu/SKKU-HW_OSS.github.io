@@ -95,3 +95,27 @@ def compute_gradient_penalty(D, real_samples, fake_samples):
 
     return gradient_penalty
 
+
+class example_Dataset(data.Dataset):
+    def __init__(self, dirs, in_size=64, scale_by=4, augmentation=True):
+        self.in_size = in_size
+        self.scale_by = scale_by
+        self.train_size = self.in_size // self.scale_by
+        self.augmentation = augmentation
+        self.img_list = []
+
+        for d in dirs:
+            getFiles(d, self.img_list)
+
+    def __len__(self):
+        # return length of list of images
+        return len(self.img_list)
+
+    def __getitem__(self, index):
+        img_path = self.img_list[index]
+        img = cv2.imread(img_path)
+        lr_img = img
+        gt_img = img
+        name = os.path.basename(img_path)
+
+        return  lr_img, gt_img, name

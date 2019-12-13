@@ -16,7 +16,6 @@ from model import Generator, Discriminator, load_FAN, upsample
 # for phase 3
 # from model import example_generator as Generator
 
-
 # path should be left to relative path for others to clone and run code
 proj_directory = './'
 data_directory = '/dataset'
@@ -25,6 +24,7 @@ celeba = os.path.join(data_directory, 'img_align_celeba')
 menpo = os.path.join(data_directory, 'LS3D-W/Menpo-3D')
 _300w = os.path.join(data_directory, 'LS3D-W/300W-Testset-3D')
 aflw = os.path.join(data_directory, 'LS3D-W/AFLW2000-3D-Reannotated')
+ffhq = os.path.join(data_directory, 'ffhq')
 
 # path should be left to relative path for others to clone and run code
 validation_directory = ''
@@ -204,5 +204,5 @@ def train(train_directories, n_epoch):
 
 if __name__ == '__main__':
     epochs = 70
-    train_directories = [celeba]
+    train_directories = [ffhq]
     train(train_directories, epochs)

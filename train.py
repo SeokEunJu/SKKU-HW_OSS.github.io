@@ -8,17 +8,11 @@ import os
 from tensorboardX import SummaryWriter
 from utils import normalization, compute_gradient_penalty
 
-from utils import Dataset
-# for phase 2 and 3
-# from utils import example_Dataset as Dataset
-
+from utils import Dataset, normalization, compute_gradient_penalty
 from model import Generator, Discriminator, load_FAN, upsample
-# for phase 3
-# from model import example_generator as Generator
 
-# path should be left to relative path for others to clone and run code
-proj_directory = './'
-data_directory = '/dataset'
+proj_directory = 'C:\Users\ldh27\OneDrive\바탕 화면\오픈소스소프트웨어실습\OSS_Project\SKKU-HW_OSS.github.io'
+data_directory = 'C:\Users\ldh27\OneDrive\바탕 화면\오픈소스소프트웨어실습\OSS_Project\DATASET'
 
 celeba = os.path.join(data_directory, 'img_align_celeba')
 menpo = os.path.join(data_directory, 'LS3D-W/Menpo-3D')
@@ -27,12 +21,12 @@ aflw = os.path.join(data_directory, 'LS3D-W/AFLW2000-3D-Reannotated')
 ffhq = os.path.join(data_directory, 'ffhq')
 
 # path should be left to relative path for others to clone and run code
-validation_directory = ''
+validation_directory = ffhq + '/00000/00043.png'
 
 save_path_G = os.path.join(proj_directory, 'ckpt', 'generator.pth')
 save_path_D = os.path.join(proj_directory, 'ckpt', 'discriminator.pth')
 
-batch_size = 8
+batch_size = 16
 resnet = resnet50(pretrained=True).eval()
 
 def train(train_directories, n_epoch):

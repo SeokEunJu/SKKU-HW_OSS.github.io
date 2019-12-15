@@ -41,10 +41,10 @@ def train(train_directories, n_epoch):
     valid_dataset = Dataset(validation_directories)  # evaluation dataset
     loaded_valid_data = DataLoader(dataset=valid_dataset, batch_size=1)
 
-    generator = Generator()  # .cuda()
-    discriminator = Discriminator()  # .cuda()
-    FAN = load_FAN()  # .cuda()
-    preprocess_for_FAN = upsample()  # .cuda()
+    generator = Generator().cuda()
+    discriminator = Discriminator().cuda()
+    FAN = load_FAN().cuda()
+    preprocess_for_FAN = upsample().cuda()
 
     if not os.path.exists(os.path.join(proj_directory, 'validation')):
         os.makedirs(os.path.join(proj_directory, 'validation'))
@@ -64,9 +64,9 @@ def train(train_directories, n_epoch):
     mse = nn.MSELoss()
 
     res_base = nn.Sequential(resnet.conv1, resnet.bn1, resnet.relu, resnet.maxpool)
-    res_B1 = nn.Sequential(*list(res_base), *list(resnet.layer1))  # .cuda()
-    res_B2 = nn.Sequential(*list(resnet.layer2))  # .cuda()
-    res_B3 = nn.Sequential(*list(resnet.layer3))  # .cuda()
+    res_B1 = nn.Sequential(*list(res_base), *list(resnet.layer1)).cuda()
+    res_B2 = nn.Sequential(*list(resnet.layer2)).cuda()
+    res_B3 = nn.Sequential(*list(resnet.layer3)).cuda()
 
     init_lr = 2.5e-4
     final_lr = 1e-5

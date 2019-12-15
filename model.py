@@ -5,10 +5,68 @@ class Generator(nn.Module):
     def __init__(self):
         super(Generator, self).__init__()
 
+        self.input_block = nn.Sequential(
+            nn.Conv2d(3, 64, 3, padding = 1),
+            nn.ReLU()
+        )
+
+        self.RBx12 = nn.Sequential(
+            ResidualBlock(64),
+            ResidualBlock(64),
+            ResidualBlock(64),
+            ResidualBlock(64),
+
+            ResidualBlock(64),
+            ResidualBlock(64),
+            ResidualBlock(64),
+            ResidualBlock(64),
+
+            ResidualBlock(64),
+            ResidualBlock(64),
+            ResidualBlock(64),
+            ResidualBlock(64)
+
+        )
+
+        self.RBx3 = nn.Sequential(
+            ResidualBlock(64),
+            ResidualBlock(64),
+            ResidualBlock(64)
+        )
+
+        self.deconv_12_3 = nn.Sequential(
+            nn.BatchNorm2d(64),
+            nn.ReLU(),
+            nn.ConvTranspose2d(64, 64, kernel_size=4, stride=2, padding=1)
+        )
+
+        self.deconv_3_2 = nn.Sequential(
+            nn.BatchNorm2d(64),
+            nn.ReLU(),
+            nn.ConvTranspose2d(64, 64, kernel_size=4, stride=2, padding=1)
+        )
+
+        self.final_conv = nn.Sequential(
+            nn.Conv2d(64, 64, 3, padding=1),
+            nn.ReLU()
+        )
+
+        self.final = nn.Conv2d(64, 3, 3, padding=1)
+
 
     def forward(self, x):
 
-        return
+        x = x.float()
+        x = x.cuda()
+        _in = self.input_block(x)
+        rb = self.RBx12(_in)
+        deconv1 = self.deconv_12_3(rb + _in)
+        rb2 = self.RBx3(deconv1)
+        deconv2 = self.deconv_3_2(rb2 + deconv1)
+        final_conv = self.final_conv(deconv2)
+        final = self.final(final_conv)
+
+        return final
 
 
 class Discriminator(nn.Module):

@@ -25,8 +25,20 @@ class Dataset(data.Dataset):
     def __getitem__(self, index):
         # define how to get each item from the list and return it
         # hint: read image file -> augment image -> downsample image -> normalize value -> turn it into tensor
+        img_path = self.img_list[index]
+        img = cv2.imread(img_path)
+        if self.augmentation:
+            img = augmentation(img)
+        lr_img, gt_img = downsample(img, size=(self.input_size, self.input_size))
+        lr_img = normalization(lr_img, _from=(0, 255))
+        gt_img = normalization(gt_img, _from=(0, 255))
+        to_tensor = torchvision.transforms.ToTensor()
+        lr_img = to_tensor(lr_img).cuda()
+        gt_img = to_tensor(gt_img).cuda()
 
-        return  # lr_img, gt_img, name
+        name = os.path.basename(img_path)
+
+        return lr_img, gt_img, name
 
 
 

@@ -116,46 +116,36 @@ def train(train_directories, n_epoch):
 
             # adversarial loss added in the latter epoch
             if epoch >= GAN_start:
-                discriminator.eval()
-                fake_logit = discriminator(sr).mean()
-                adv_loss = -fake_logit
+                fake_logit =
+                adv_loss = - fake_logit
                 g_loss += 1e-3 * adv_loss
 
             g_loss.backward()
             G_optimizer.step()
 
-            d_loss = 0
             # train Discriminator to use adversarial loss
             if epoch >= GAN_start:
-                generator.eval()
-                discriminator.train()
-
-                G_optimizer.zero_grad()
                 D_optimizer.zero_grad()
 
-                sr = generator(lr).detach()
+                sr = generator(lr).eval().detach()
                 fake_logit = discriminator(sr).mean()
                 real_logit = discriminator(gt).mean()
 
                 gradient_penalty = compute_gradient_penalty(discriminator, gt, sr)
                 d_loss = fake_logit - real_logit + 10. * gradient_penalty
-                # d_loss = 1e-3 * d_loss
 
                 d_loss.backward()
                 D_optimizer.step()
-                generator.train()
 
             if i % 10 == 0:
-                print("loss at %d : %d ==>\t%.4f (%.4f + %.4f + %4f + %.4f)\tD:%.4f"
-                      % (epoch, i, g_loss, mse_loss, perceptual_loss, FAN_loss, adv_loss, d_loss))
+                print("loss at %d : %d ==>\t%.4f (%.4f + %.4f + %.4f)"
+                      % (epoch, i, g_loss, mse_loss, perceptual_loss, FAN_loss))
                 summary_writer.add_scalar('mse_loss', mse_loss.item(), epoch * len(loaded_training_data) + i)
                 summary_writer.add_scalar('perceptual_loss', perceptual_loss.item(),
                                           epoch * len(loaded_training_data) + i)
                 summary_writer.add_scalar('FAN_loss', FAN_loss.item(), epoch * len(loaded_training_data) + i)
-                summary_writer.add_scalar('adv_loss', adv_loss.item(), epoch * len(loaded_training_data) + i)
-                summary_writer.add_scalar('Discriminator_loss', d_loss.item(), epoch * len(loaded_training_data) + i)
 
-        if epoch % 2 == 0:
+        if epoch % 1 == 0:
             validation = os.path.join(proj_directory, 'validation', str(epoch))
             os.makedirs(validation)
             for _, val_data in enumerate(loaded_valid_data):

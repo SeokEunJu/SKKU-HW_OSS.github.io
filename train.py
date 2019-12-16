@@ -116,8 +116,9 @@ def train(train_directories, n_epoch):
 
             # adversarial loss added in the latter epoch
             if epoch >= GAN_start:
-                fake_logit =
-                adv_loss = - fake_logit
+                discriminator.eval()
+                fake_logit = discriminator(sr).mean()
+                adv_loss = -fake_logit
                 g_loss += 1e-3 * adv_loss
 
             g_loss.backward()
@@ -125,6 +126,10 @@ def train(train_directories, n_epoch):
 
             # train Discriminator to use adversarial loss
             if epoch >= GAN_start:
+                generator.eval()
+                discriminator.train()
+
+                G_optimizer.zero_grad()
                 D_optimizer.zero_grad()
 
                 sr = generator(lr).eval().detach()

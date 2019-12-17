@@ -154,7 +154,7 @@ def train(train_directories, n_epoch):
                 summary_writer.add_scalar('adv_loss', adv_loss.item(), epoch * len(loaded_training_data) + i)
                 summary_writer.add_scalar('Discriminator_loss', d_loss.item(), epoch * len(loaded_training_data) + i)
 
-        if epoch % 1 == 0:
+        if epoch % 2 == 0:
             validation = os.path.join(proj_directory, 'validation', str(epoch))
             os.makedirs(validation)
             for _, val_data in enumerate(loaded_valid_data):

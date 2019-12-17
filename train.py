@@ -138,17 +138,21 @@ def train(train_directories, n_epoch):
 
                 gradient_penalty = compute_gradient_penalty(discriminator, gt, sr)
                 d_loss = fake_logit - real_logit + 10. * gradient_penalty
+                # d_loss = 1e-3 * d_loss
 
                 d_loss.backward()
                 D_optimizer.step()
+                generator.train()
 
             if i % 10 == 0:
-                print("loss at %d : %d ==>\t%.4f (%.4f + %.4f + %.4f)"
-                      % (epoch, i, g_loss, mse_loss, perceptual_loss, FAN_loss))
+                print("loss at %d : %d ==>\t%.4f (%.4f + %.4f + %4f + %.4f)\tD:%.4f"
+                      % (epoch, i, g_loss, mse_loss, perceptual_loss, FAN_loss, adv_loss, d_loss))
                 summary_writer.add_scalar('mse_loss', mse_loss.item(), epoch * len(loaded_training_data) + i)
                 summary_writer.add_scalar('perceptual_loss', perceptual_loss.item(),
                                           epoch * len(loaded_training_data) + i)
                 summary_writer.add_scalar('FAN_loss', FAN_loss.item(), epoch * len(loaded_training_data) + i)
+                summary_writer.add_scalar('adv_loss', adv_loss.item(), epoch * len(loaded_training_data) + i)
+                summary_writer.add_scalar('Discriminator_loss', d_loss.item(), epoch * len(loaded_training_data) + i)
 
         if epoch % 1 == 0:
             validation = os.path.join(proj_directory, 'validation', str(epoch))

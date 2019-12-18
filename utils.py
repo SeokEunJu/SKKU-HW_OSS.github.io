@@ -56,21 +56,50 @@ def getFiles(dir, dataList):
 
 
 def augmentation(image):
-    # random flipping
+    # flipping
+    flip_flag = randint(0, 1)
+    if flip_flag == 1:
+        image = cv2.flip(image, 1)
 
-    # random rotation
+    # rotation
+    rot = randint(0, 359)
+    if rot < 90:
+        rot = 0
+    elif rot < 180:
+        rot = 90
+    elif rot < 270:
+        rot = 180
+    else:
+        rot = 270
+
+    w = image.shape[1]
+    h = image.shape[0]
+    center = (w / 2, h / 2)
+
+    M = cv2.getRotationMatrix2D(center, rot, scale=1.0)
+    if rot == 90 or rot == 270:
+        image = cv2.warpAffine(image, M, (h, w))
+
+    elif rot == 180:
+        image = cv2.warpAffine(image, M, (w, h))
 
     return image
 
 
 def downsample(image, size):
-    # assure the input image is in shape of 64 x 64
+    # make sure the input image is 64 x 64
+    if not image.shape == (64, 64):
+        image = cv2.resize(image, (64, 64), interpolation=cv2.INTER_CUBIC)
 
-    # size input in a tuple form (h , w)
+    h = size[0]
+    w = size[1]
 
-    # random blur
+    # gaussian blurring
+    blur_int = 5  # randint(0, 9) * 2 + 1
+    lr_img = cv2.GaussianBlur(image, (blur_int, blur_int), 0, 0, borderType=cv2.BORDER_DEFAULT)
 
-    # downsample to make a LR image, and return original image together
+    # downsample to a lower resolution (resizing)
+    lr_img = cv2.resize(lr_img, dsize=(w, h), interpolation=cv2.INTER_CUBIC)
 
     return lr_img, image
 
@@ -78,9 +107,14 @@ def downsample(image, size):
 def normalization(image, _from=(0, 255)):
     # if the image range in (0, 255): normalize to range of (0, 1)
     # if the image range in (0, 1): turn it back to range of (0, 255)
+    if _from == (0, 255):
+            return image / 255
+
+    elif _from == (0, 1):
+            return image * 255
 
     # else: out of range
-    raise ValueError('wrong range input: normalization only suppoerts range of (0, 1) and (0, 255)')
+    raise ValueError('wrong range input: normalization only suppoerts range of (0, 1), and (0, 255)')
 
 
 def compute_gradient_penalty(D, real_samples, fake_samples):

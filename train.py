@@ -6,21 +6,19 @@ from torchvision.models import resnet50
 import cv2
 import os
 from tensorboardX import SummaryWriter
-from utils import normalization, compute_gradient_penalty
 
 from utils import Dataset, normalization, compute_gradient_penalty
 from model import Generator, Discriminator, load_FAN, upsample
 
-proj_directory = 'C:\Users\ldh27\OneDrive\바탕 화면\오픈소스소프트웨어실습\OSS_Project\SKKU-HW_OSS.github.io'
-data_directory = 'C:\Users\ldh27\OneDrive\바탕 화면\오픈소스소프트웨어실습\OSS_Project\DATASET'
+proj_directory = './'
+data_directory = '/dataset'
 
 celeba = os.path.join(data_directory, 'img_align_celeba')
+ffhq = os.path.join(data_directory, 'ffhq')
 menpo = os.path.join(data_directory, 'LS3D-W/Menpo-3D')
 _300w = os.path.join(data_directory, 'LS3D-W/300W-Testset-3D')
 aflw = os.path.join(data_directory, 'LS3D-W/AFLW2000-3D-Reannotated')
-ffhq = os.path.join(data_directory, 'ffhq')
 
-# path should be left to relative path for others to clone and run code
 validation_directory = ffhq + '/00000/00043.png'
 
 save_path_G = os.path.join(proj_directory, 'ckpt', 'generator.pth')
@@ -74,7 +72,7 @@ def train(train_directories, n_epoch):
     GAN_start = 60
 
     print('train with MSE and perceptual loss')
-    for epoch in range(n_epoch):
+    for epoch in range(60, n_epoch):
         # decay learning rate after one epoch
         learning_rate = init_lr - decay * epoch
 
@@ -121,11 +119,14 @@ def train(train_directories, n_epoch):
                 adv_loss = -fake_logit
                 g_loss += 1e-3 * adv_loss
 
+            # g_loss.backward(retain_graph=True)
             g_loss.backward()
             G_optimizer.step()
 
+            #
+            # train Discriminator
+            #
             d_loss = 0
-            # train Discriminator to use adversarial loss
             if epoch >= GAN_start:
                 generator.eval()
                 discriminator.train()
@@ -133,7 +134,7 @@ def train(train_directories, n_epoch):
                 G_optimizer.zero_grad()
                 D_optimizer.zero_grad()
 
-                sr = generator(lr).eval().detach()
+                sr = generator(lr).detach()
                 fake_logit = discriminator(sr).mean()
                 real_logit = discriminator(gt).mean()
 

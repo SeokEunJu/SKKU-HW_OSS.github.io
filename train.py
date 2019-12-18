@@ -124,6 +124,7 @@ def train(train_directories, n_epoch):
             g_loss.backward()
             G_optimizer.step()
 
+            d_loss = 0
             # train Discriminator to use adversarial loss
             if epoch >= GAN_start:
                 generator.eval()
